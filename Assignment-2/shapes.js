@@ -1,7 +1,7 @@
 
 let gl = undefined;
 let matrixStack;
-let sphere, cube, cone;
+let sphere, cylinder, cone;
 let angle = 0; // For animation
 
 function init() {
@@ -11,17 +11,18 @@ function init() {
 
     // Add initialization code here
     
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0.9, 0.9, 0.9, 1.0); 
+   // gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0.2, 0.2, 0.2, 1.0); 
+ 
     gl.enable(gl.DEPTH_TEST);
 
  
     matrixStack = new MatrixStack();
 
  
-    sphere = new Sphere();
-    cube = new Cube();
-    cone = new Cone();
+    sphere = new Sphere(gl, 36, 18);
+    cylinder = new Cylinder(gl, 36);
+    cone = new Cone(gl, 36);
     render();
 }
 
@@ -29,34 +30,39 @@ function render() {
     // Add rendering code here
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        // Animate the sphere (rotate)
+    let ms = matrixStack;
+
     angle += 2.0;
     angle %= 360.0;
 
-        // Draw Sphere
+    // Draw Sphere
     ms.push();
-    ms.translate(...positions[0].pos);
-    ms.scale(...positions[0].scale);
-    ms.rotate(angle, [0, 1, 0]); // Rotate around y-axis
+    ms.translate(0,.7,-1);
+    ms.rotate(angle, [0, 1, 0]); 
+    ms.scale(0.2);
     sphere.MV = ms.current();
     sphere.draw();
     ms.pop();
 
-        // Draw Cone
+    // Draw Cone
     ms.push();
-    ms.translate(...positions[1].pos);
-    ms.scale(...positions[1].scale);
+    ms.translate(-.4,0,0);
+    ms.rotate(angle, [1, 1, 0]);
+    ms.scale(0.2)
     cone.MV = ms.current();
     cone.draw();
     ms.pop();
 
-        // Draw Cylinder
+    // Draw Cylinder
     ms.push();
-    ms.translate(...positions[2].pos);
-    ms.scale(...positions[2].scale);
+    ms.translate(.6,.4,-1);
+    ms.rotate(angle, [0, 1, 1]);
+    ms.scale(0.2)
     cylinder.MV = ms.current();
     cylinder.draw();
     ms.pop();
+
+    requestAnimationFrame(render);
 }
 
 window.onload = init;
